@@ -4,6 +4,34 @@ var plugin = require("./product-storage.js");
 seneca.use(plugin);
 seneca.use("seneca-entity");
 
+seneca.add("role:api, cmd:product", function (args, done) {
+    if (args.req$.method == "POST") {
+        var product = {
+            product: args.product,
+            price: args.price,
+            category: args.category,
+        };
+        seneca.act({
+                role: "product",
+                cmd: "add",
+                data: product
+            },
+            function (err, msg) {
+                done(err, msg);
+            }
+        );
+    }
+    if (args.req$.method == "GET") {
+        seneca.act({
+            role: "product",
+            cmd: "get-all"
+        }, function (err, msg) {
+            done(err, msg);
+        });
+    }
+    
+});
+
 seneca.act("role:web", {
     use: {
         prefix: "/api",
