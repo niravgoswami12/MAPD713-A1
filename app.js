@@ -29,6 +29,25 @@ seneca.add("role:api, cmd:product", function (args, done) {
             done(err, msg);
         });
     }
+    if (args.req$.method == "DELETE") {
+        seneca.act({
+            role: "product",
+            cmd: "get-all"
+        }, function (err, msg) {
+            for (const item of msg) {
+                seneca.act({
+                        role: "product",
+                        cmd: "delete",
+                        id: item.id
+                    },
+                    function (err, msg) {}
+                );
+            }
+            done(err, {
+                message: "Deleted successfully."
+            });
+        });
+    }
     
 });
 
