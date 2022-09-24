@@ -4,8 +4,12 @@ var plugin = require("./product-storage.js");
 seneca.use(plugin);
 seneca.use("seneca-entity");
 
+let getReqCount = 0;
+let postReqCount = 0;
 seneca.add("role:api, cmd:product", function (args, done) {
     if (args.req$.method == "POST") {
+        postReqCount++;
+        console.log("> products POST: received request")
         var product = {
             product: args.product,
             price: args.price,
@@ -17,19 +21,24 @@ seneca.add("role:api, cmd:product", function (args, done) {
                 data: product
             },
             function (err, msg) {
+                console.log("< products POST: sending response")
                 done(err, msg);
             }
         );
     }
     if (args.req$.method == "GET") {
+        getReqCount++;
+        console.log("> products GET: received request")
         seneca.act({
             role: "product",
             cmd: "get-all"
         }, function (err, msg) {
+            console.log("< products GET: sending response")
             done(err, msg);
         });
     }
     if (args.req$.method == "DELETE") {
+        console.log("> products DELETE: received request")
         seneca.act({
             role: "product",
             cmd: "get-all"
@@ -43,11 +52,13 @@ seneca.add("role:api, cmd:product", function (args, done) {
                     function (err, msg) {}
                 );
             }
+            console.log("< products DELETE: sending response")
             done(err, {
                 message: "Deleted successfully."
             });
         });
     }
+    console.log(`Processed Request Count--> Get:${getReqCount}, Post:${postReqCount}`)
     
 });
 
