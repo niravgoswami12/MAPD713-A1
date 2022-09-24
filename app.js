@@ -7,6 +7,7 @@ seneca.use("seneca-entity");
 let getReqCount = 0;
 let postReqCount = 0;
 seneca.add("role:api, cmd:product", function (args, done) {
+    // Post method handler
     if (args.req$.method == "POST") {
         postReqCount++;
         console.log("> products POST: received request")
@@ -26,6 +27,7 @@ seneca.add("role:api, cmd:product", function (args, done) {
             }
         );
     }
+    // Get method handler
     if (args.req$.method == "GET") {
         getReqCount++;
         console.log("> products GET: received request")
@@ -37,6 +39,7 @@ seneca.add("role:api, cmd:product", function (args, done) {
             done(err, msg);
         });
     }
+    // Delete method handler
     if (args.req$.method == "DELETE") {
         console.log("> products DELETE: received request")
         seneca.act({
@@ -85,12 +88,10 @@ app.use(seneca.export("web"));
 const HOST = "127.0.0.1"
 const PORT = 3009;
 app.listen(PORT, HOST, function(){
-
     console.log(`Server listening on ${HOST}:${PORT}`);
     console.log("------------ API Endpoints ------------");
     console.log(`Method: POST -->  http://${HOST}:${PORT}/api/product 
     payload example: {“product”:”Laptop”, “price”:201.99, “category”:”PC”}`);
     console.log(`Method: GET --> http://${HOST}:${PORT}/api/product`);
     console.log(`Method: DELETE --> http://${HOST}:${PORT}/api/product`);
-
 });
